@@ -1,7 +1,3 @@
-#define joystickthreshold 15
-#define autogoaldisttime 5000
-#define turn90time 500
-
 void intake();
 void outthrow();
 void raisearm();
