@@ -11,3 +11,5 @@ void mecanumdrive();
 void skiddrive();
 void go();
 void debugprint();
+void buttonhandler();
+void rtControl();

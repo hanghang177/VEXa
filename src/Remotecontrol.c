@@ -10,16 +10,29 @@
 #define autogoaldisttime 5000
 #define turn90time 500
 
+#define raisearmbtn vexRT[Btn5U]
+#define intakebtn vexRT[Btn6U]
+#define debugautobtn vexRT[Btn7L]
+
 //Config
 bool auto = false;
 bool mecanum = true;
-
 
 //Channel
 int x1 = 0;
 int y1 = 0;
 int x2 = 0;
 int y2 = 0;
+
+//Last button state
+bool lastraisearmbtn = false;
+bool lastintakebtn = false;
+bool lastdebugautobtn = false;
+
+//Button press
+bool raisearmbtnpressed = false;
+bool intakebtnpressed = false;
+bool debugautobtnpressed = false;
 
 //Speed of each motor
 int leftspeed[2];
@@ -132,6 +145,52 @@ void debugprint()	//Print debug info to LCD screen
 	displayNextLCDString(debugger);
 }
 
+void buttonhandler()
+{
+	if(lastraisearmbtn){
+		if(!raisearmbtn){
+			raisearmbtnpressed = true;
+		}
+	}
+	if(lastintakebtn){
+		if(!intakebtn){
+			intakebtnpressed = true;
+		}
+	}
+	if(lastdebugautobtn){
+		if(!debugautobtn){
+			debugautobtnpressed = true;
+		}
+	}
+}
+
+void rtControl()
+{
+	buttonhandler();
+	if(raisearmbtnpressed)
+	{
+		raisearmbtnpressed = false;
+	}
+	if(intakebtnpressed)
+	{
+		intakebtnpressed = false;
+	}
+	if(debugautobtnpressed)
+	{
+		debugautobtnpressed = false;
+		auto = !auto;
+	}
+	if(mecanum)
+	{
+		mecanumdrive();
+	}
+	else
+	{
+		skiddrive();
+	}
+
+}
+
 void go()	//Runs the motor
 {
 	motor[left1] = leftspeed[0];
@@ -146,14 +205,7 @@ task main()
 	{
 		debugprint();
 		filterRT();
-		if(mecanum)
-		{
-			mecanumdrive();
-		}
-		else
-		{
-			skiddrive();
-		}
+		rtControl();
 		go();
 	}
 	while(auto)
